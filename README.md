@@ -1,2 +1,2 @@
-# Ohsori-BE
-Ohsori Backend
+# Osori-BE
+Osori Backend

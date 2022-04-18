@@ -19,11 +19,7 @@ public class SignupService {
             throw new CustomException(ErrorCode.ALREADY_EXIST_EMAIL);
         }
 
-        User user = User.builder()
-                .email(userDto.getEmail())
-                .password(userDto.getPassword())
-                .nickname(userDto.getNickname())
-                .build();
+        User user = userDto.toEntity();
         userRepository.save(user);
     }
 }

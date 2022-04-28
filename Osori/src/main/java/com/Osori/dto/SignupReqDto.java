@@ -8,7 +8,7 @@ import lombok.*;
 @Setter
 @Getter
 @Builder
-public class UserDto {
+public class SignupReqDto {
     public String email;
     public String password;
     public String nickname;

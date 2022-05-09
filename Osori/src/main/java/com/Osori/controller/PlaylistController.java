@@ -1,11 +1,12 @@
 package com.Osori.controller;
 
+import com.Osori.dto.PlaylistReqDto;
 import com.Osori.dto.PlaylistResDto;
 import com.Osori.service.PlaylistService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +17,13 @@ public class PlaylistController {
     public static final Long tmpUserId = 1L; // 로그인 상태 관리 어떻게 하는지 결정 후 적용
 
     @GetMapping
-    public PlaylistResDto getPlaylist(){
-        return playlistService.getPlaylist(tmpUserId);
+    public ResponseEntity<PlaylistResDto> getPlaylist(){
+        return new ResponseEntity<>(playlistService.getPlaylist(tmpUserId), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> addPlaylist(@RequestBody PlaylistReqDto playlistReqDto){
+        playlistService.addPlaylist(tmpUserId, playlistReqDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

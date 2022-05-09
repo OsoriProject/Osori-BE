@@ -3,6 +3,8 @@ package com.Osori.domain.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,4 +23,7 @@ public class Playlist {
     @ManyToOne
     @JoinColumn(name = "User_id")
     private User user;
+
+    @OneToMany(mappedBy = "playlist")
+    private List<Music> musics = new ArrayList<>();
 }

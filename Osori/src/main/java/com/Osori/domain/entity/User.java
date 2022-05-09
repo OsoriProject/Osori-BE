@@ -26,7 +26,6 @@ public class User {
     @Column
     private String nickname;
 
-    @OneToMany
-    @JoinColumn(name = "user")
+    @OneToMany(mappedBy = "user")
     private List<Playlist> playlists = new ArrayList<>();
 }

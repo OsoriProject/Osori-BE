@@ -6,6 +6,7 @@ import com.Osori.domain.entity.User;
 import com.Osori.domain.repository.MusicRepository;
 import com.Osori.domain.repository.PlaylistRepository;
 import com.Osori.domain.repository.UserRepository;
+import com.Osori.dto.DetailResDto;
 import com.Osori.dto.PlaylistReqDto;
 import com.Osori.dto.PlaylistResDto;
 import com.Osori.exception.CustomException;
@@ -26,6 +27,11 @@ public class PlaylistService {
     private User getUser(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
+    }
+
+    private Playlist getPlaylistById(Long playlistId){
+        return playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PLAYLIST));
     }
 
     public PlaylistResDto getPlaylist(Long userId){
@@ -52,8 +58,12 @@ public class PlaylistService {
     }
 
     public void deletePlaylist(Long playlistId){
-        Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PLAYLIST));
+        Playlist playlist = getPlaylistById(playlistId);
         playlistRepository.delete(playlist);
+    }
+
+    public DetailResDto detailPlaylist(Long playlistId){
+        Playlist playlist = getPlaylistById(playlistId);
+        return DetailResDto.of(playlist);
     }
 }

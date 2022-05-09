@@ -24,9 +24,8 @@ public class PlaylistService {
     private final UserRepository userRepository;
 
     private User getUser(Long userId){
-        User user = userRepository.findById(userId)
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
-        return user;
     }
 
     public PlaylistResDto getPlaylist(Long userId){
@@ -50,5 +49,11 @@ public class PlaylistService {
             musicList.add(m);
         }
         musicRepository.saveAll(musicList);
+    }
+
+    public void deletePlaylist(Long playlistId){
+        Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PLAYLIST));
+        playlistRepository.delete(playlist);
     }
 }

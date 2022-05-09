@@ -24,6 +24,6 @@ public class Playlist {
     @JoinColumn(name = "User_id")
     private User user;
 
-    @OneToMany(mappedBy = "playlist")
+    @OneToMany(mappedBy = "playlist", cascade = CascadeType.ALL)
     private List<Music> musics = new ArrayList<>();
 }

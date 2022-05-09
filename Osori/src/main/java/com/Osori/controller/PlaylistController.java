@@ -1,5 +1,6 @@
 package com.Osori.controller;
 
+import com.Osori.domain.entity.Playlist;
 import com.Osori.dto.PlaylistReqDto;
 import com.Osori.dto.PlaylistResDto;
 import com.Osori.service.PlaylistService;
@@ -24,6 +25,12 @@ public class PlaylistController {
     @PostMapping
     public ResponseEntity<Void> addPlaylist(@RequestBody PlaylistReqDto playlistReqDto){
         playlistService.addPlaylist(tmpUserId, playlistReqDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePlaylist(@PathVariable("id") Long playlistId){
+        playlistService.deletePlaylist(playlistId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

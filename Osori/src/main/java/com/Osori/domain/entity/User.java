@@ -28,4 +28,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Playlist> playlists = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Chat> chatList = new ArrayList<>();
 }

@@ -13,5 +13,5 @@ import java.util.List;
 @Builder
 public class PlaylistReqDto {
     private String name;
-    private List<String> musics;
+    private List<MusicDto> musics;
 }

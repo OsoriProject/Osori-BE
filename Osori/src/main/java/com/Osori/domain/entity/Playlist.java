@@ -20,6 +20,9 @@ public class Playlist {
     @Column
     private String name;
 
+    @Column
+    private String thumbnail;
+
     @ManyToOne
     @JoinColumn(name = "User_id")
     private User user;

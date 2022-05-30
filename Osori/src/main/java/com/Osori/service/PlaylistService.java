@@ -45,7 +45,9 @@ public class PlaylistService {
         User user = getUser(userId);
         Playlist playlist = playlistRepository.save(Playlist.builder()
                 .name(playlistReqDto.getName())
-                .user(user).build());
+                .thumbnail(playlistReqDto.getMusics().get(0).getThumbnail())
+                .user(user)
+                .build());
 
         List<Music> musicList = new ArrayList<>();
         for(MusicDto music:playlistReqDto.getMusics()){

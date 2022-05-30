@@ -11,11 +11,13 @@ import lombok.*;
 public class PlaylistDto {
     private Long id;
     private String name;
+    private String thumbnail;
 
     public static PlaylistDto of(Playlist playlist){
         return PlaylistDto.builder()
                 .id(playlist.getId())
                 .name(playlist.getName())
+                .thumbnail(playlist.getThumbnail())
                 .build();
     }
 }

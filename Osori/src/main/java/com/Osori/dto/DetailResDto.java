@@ -15,6 +15,7 @@ import java.util.List;
 public class DetailResDto {
     private Long id;
     private String name;
+    private String thumbnail;
     private List<MusicDto> musics;
 
     public static DetailResDto of(Playlist playlist){
@@ -26,6 +27,7 @@ public class DetailResDto {
         return DetailResDto.builder()
                 .id(playlist.getId())
                 .name(playlist.getName())
+                .thumbnail(playlist.getThumbnail())
                 .musics(musics)
                 .build();
     }

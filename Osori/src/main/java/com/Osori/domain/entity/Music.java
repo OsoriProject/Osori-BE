@@ -19,7 +19,7 @@ public class Music {
     private String title;
 
     @Column
-    private Long vid;
+    private String vid;
 
     @Column
     private String thumbnail;

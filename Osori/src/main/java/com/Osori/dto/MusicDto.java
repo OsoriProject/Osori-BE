@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 public class MusicDto {
     private Long id;
-    private Long videoId;
+    private String videoId;
     private String title;
     private String thumbnail;
 

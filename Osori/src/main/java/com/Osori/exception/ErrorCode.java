@@ -12,6 +12,7 @@ public enum ErrorCode {
     NOT_EXIST_USER(HttpStatus.NOT_FOUND, "존재하지 않는 사용자 입니다."),
     NOT_EXIST_PLAYLIST(HttpStatus.NOT_FOUND, "존재하지 않는 플레이리스트 입니다."),
     MISMATCH_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 틀립니다."),
+    PERMISSION_NOT_ALLOWED(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "허용되지 않은 메서드 입니다."), //405
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 입니다."); // 500
 

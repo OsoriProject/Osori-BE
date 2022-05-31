@@ -13,9 +13,9 @@ import java.util.List;
 public class AnswerResDto {
     Long id;
     String content;
-    List<String> playlist;
+    List<YoutubeDto> playlist;
 
-    public static AnswerResDto of(String answer, List<String> playList, Long id){
+    public static AnswerResDto of(String answer, List<YoutubeDto> playList, Long id){
         return AnswerResDto.builder()
                 .id(id)
                 .content(answer)

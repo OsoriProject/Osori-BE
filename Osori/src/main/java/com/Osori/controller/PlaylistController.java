@@ -12,31 +12,29 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/playlist")
+@RequestMapping("/playlist/{userId}")
 public class PlaylistController {
     private final PlaylistService playlistService;
 
-    public static final Long tmpUserId = 1L; // 로그인 상태 관리 어떻게 하는지 결정 후 적용
-
     @GetMapping
-    public ResponseEntity<PlaylistResDto> getPlaylist(){
-        return new ResponseEntity<>(playlistService.getPlaylist(tmpUserId), HttpStatus.OK);
+    public ResponseEntity<PlaylistResDto> getPlaylist(@PathVariable("userId") Long userId){
+        return new ResponseEntity<>(playlistService.getPlaylist(userId), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Void> addPlaylist(@RequestBody PlaylistReqDto playlistReqDto){
-        playlistService.addPlaylist(tmpUserId, playlistReqDto);
+    public ResponseEntity<Void> addPlaylist(@PathVariable("userId") Long userId, @RequestBody PlaylistReqDto playlistReqDto){
+        playlistService.addPlaylist(userId, playlistReqDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlaylist(@PathVariable("id") Long playlistId){
-        playlistService.deletePlaylist(playlistId);
+    public ResponseEntity<Void> deletePlaylist(@PathVariable("userId") Long userId, @PathVariable("id") Long playlistId){
+        playlistService.deletePlaylist(userId, playlistId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DetailResDto> detailPlaylist(@PathVariable("id") Long playlistId){
-        return new ResponseEntity<>(playlistService.detailPlaylist(playlistId), HttpStatus.OK);
+    public ResponseEntity<DetailResDto> detailPlaylist(@PathVariable("userId") Long userId, @PathVariable("id") Long playlistId){
+        return new ResponseEntity<>(playlistService.detailPlaylist(userId, playlistId), HttpStatus.OK);
     }
 }

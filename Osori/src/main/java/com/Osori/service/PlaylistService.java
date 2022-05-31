@@ -30,9 +30,10 @@ public class PlaylistService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
     }
 
-    private Playlist getPlaylistById(Long playlistId){
-        return playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PLAYLIST));
+    private Playlist checkAuth(Long userId, Long playlistId){
+        User user = getUser(userId);
+        return playlistRepository.findByIdAndUser(playlistId, user)
+                .orElseThrow(() -> new CustomException(ErrorCode.PERMISSION_NOT_ALLOWED));
     }
 
     public PlaylistResDto getPlaylist(Long userId){
@@ -62,13 +63,13 @@ public class PlaylistService {
         musicRepository.saveAll(musicList);
     }
 
-    public void deletePlaylist(Long playlistId){
-        Playlist playlist = getPlaylistById(playlistId);
+    public void deletePlaylist(Long userId, Long playlistId){
+        Playlist playlist = checkAuth(userId, playlistId);
         playlistRepository.delete(playlist);
     }
 
-    public DetailResDto detailPlaylist(Long playlistId){
-        Playlist playlist = getPlaylistById(playlistId);
+    public DetailResDto detailPlaylist(Long userId, Long playlistId){
+        Playlist playlist = checkAuth(userId, playlistId);
         return DetailResDto.of(playlist);
     }
 }

@@ -19,6 +19,8 @@ public class ChatService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
 
+    private final YoutubeService youtubeService;
+
     private User getUser(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
@@ -33,17 +35,21 @@ public class ChatService {
     public AnswerResDto createAnswer(Long userId, AnswerReqDto answerReqDto){
         User user = getUser(userId);
 
-        List<String> playlists = new ArrayList<>();
+        List<YoutubeDto> playlists = new ArrayList<>();
         String answer = answerReqDto.getContent() + "에 대한 대답";
-        if(true){ // 앞에 분석 하는 부분 넣어서 조건에 달아줘야함, 생성 안할때
+        if(false){ // 앞에 분석 하는 부분 넣어서 조건에 달아줘야함, 생성 안할때
             ;
         }else{ // 분석 결과 플레이리스트를 생성할 때
-            boolean flag = true;
-            while(flag){
-                playlists.add(Integer.toString(playlists.size()));
-                if(playlists.size() > 5)
-                    flag = false;
-            }
+//            boolean flag = true;
+//            while(flag){
+//                if(playlists.size() > 1)
+//                    flag = false;
+//                YoutubeDto youtubeDto = youtubeService.get(answerReqDto.getContent());
+//                playlists.add(youtubeDto);
+//            }
+
+            YoutubeDto youtubeDto = youtubeService.get(answerReqDto.getContent());
+            playlists.add(youtubeDto);
         }
 
         chatRepository.save(Chat.builder()

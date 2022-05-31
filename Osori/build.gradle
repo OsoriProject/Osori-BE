@@ -26,6 +26,10 @@ dependencies {
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	implementation group: 'com.google.apis', name: 'google-api-services-youtube', version: 'v3-rev222-1.25.0'
+	implementation group: 'com.google.oauth-client', name: 'google-oauth-client-jetty', version: '1.31.5'
+
 }
 
 tasks.named('test') {

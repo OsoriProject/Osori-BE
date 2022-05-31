@@ -16,7 +16,13 @@ public class Music {
     private Long id;
 
     @Column
-    private String url;
+    private String title;
+
+    @Column
+    private String vid;
+
+    @Column
+    private String thumbnail;
 
     @ManyToOne
     @JoinColumn(name = "Playlist_id")

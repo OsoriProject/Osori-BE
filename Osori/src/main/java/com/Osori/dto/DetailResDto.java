@@ -15,17 +15,19 @@ import java.util.List;
 public class DetailResDto {
     private Long id;
     private String name;
-    private List<String> musics;
+    private String thumbnail;
+    private List<MusicDto> musics;
 
     public static DetailResDto of(Playlist playlist){
-        List<String> musics = new ArrayList<>();
+        List<MusicDto> musics = new ArrayList<>();
         for(Music music : playlist.getMusics()){
-            musics.add(music.getUrl());
+            musics.add(MusicDto.of(music));
         }
 
         return DetailResDto.builder()
                 .id(playlist.getId())
                 .name(playlist.getName())
+                .thumbnail(playlist.getThumbnail())
                 .musics(musics)
                 .build();
     }

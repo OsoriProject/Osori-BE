@@ -7,6 +7,7 @@ import com.Osori.domain.repository.MusicRepository;
 import com.Osori.domain.repository.PlaylistRepository;
 import com.Osori.domain.repository.UserRepository;
 import com.Osori.dto.DetailResDto;
+import com.Osori.dto.MusicDto;
 import com.Osori.dto.PlaylistReqDto;
 import com.Osori.dto.PlaylistResDto;
 import com.Osori.exception.CustomException;
@@ -44,12 +45,16 @@ public class PlaylistService {
         User user = getUser(userId);
         Playlist playlist = playlistRepository.save(Playlist.builder()
                 .name(playlistReqDto.getName())
-                .user(user).build());
+                .thumbnail(playlistReqDto.getMusics().get(0).getThumbnail())
+                .user(user)
+                .build());
 
         List<Music> musicList = new ArrayList<>();
-        for(String music:playlistReqDto.getMusics()){
+        for(MusicDto music:playlistReqDto.getMusics()){
             Music m = Music.builder()
-                    .url(music)
+                    .vid(music.getVideoId())
+                    .title(music.getTitle())
+                    .thumbnail(music.getThumbnail())
                     .playlist(playlist)
                     .build();
             musicList.add(m);

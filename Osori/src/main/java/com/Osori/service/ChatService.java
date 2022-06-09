@@ -7,6 +7,7 @@ import com.Osori.domain.repository.UserRepository;
 import com.Osori.dto.*;
 import com.Osori.exception.CustomException;
 import com.Osori.exception.ErrorCode;
+import com.Osori.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,22 +19,25 @@ import java.util.List;
 public class ChatService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
+    private final TokenProvider tokenProvider;
 
     private final YoutubeService youtubeService;
 
-    private User getUser(Long userId){
-        return userRepository.findById(userId)
+    private User getUser(String userToken){
+        String userToken_ = userToken.substring(7);
+        String userEmail = tokenProvider.getUserEmailFromToken(userToken_);
+        return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
     }
 
-    public ChatResDto getChats(Long userId){
-        User user = getUser(userId);
+    public ChatResDto getChats(String userToken){
+        User user = getUser(userToken);
         List<Chat> chatList = chatRepository.findByUser(user);
         return ChatResDto.of(chatList);
     }
 
-    public AnswerResDto createAnswer(Long userId, AnswerReqDto answerReqDto){
-        User user = getUser(userId);
+    public AnswerResDto createAnswer(String userToken, AnswerReqDto answerReqDto){
+        User user = getUser(userToken);
 
         List<YoutubeDto> playlists = new ArrayList<>();
         String answer = answerReqDto.getContent() + "에 대한 대답";

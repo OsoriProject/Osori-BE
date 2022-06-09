@@ -5,6 +5,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.IOException;
+
 @RestControllerAdvice
 public class ExceptionController {
     @ExceptionHandler(CustomException.class)
@@ -27,6 +29,13 @@ public class ExceptionController {
     protected ResponseEntity<ErrorResponse> handleException(final Exception e){
         return ResponseEntity
                 .status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus().value())
+                .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
+    }
+
+    @ExceptionHandler(IOException.class)
+    protected ResponseEntity<ErrorResponse> handleIOException(final Exception e){
+        return ResponseEntity
+                .status(ErrorCode.NOT_EXIST_TOKEN.getStatus().value())
                 .body(ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 }

@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/chat/{userId}")
+@RequestMapping("/chat")
 public class ChatController {
     private final ChatService chatService;
 
     @GetMapping
-    public ResponseEntity<ChatResDto> getChats(@PathVariable("userId") Long userId){
-        return new ResponseEntity<>(chatService.getChats(userId), HttpStatus.OK);
+    public ResponseEntity<ChatResDto> getChats(@RequestHeader(value = "Authorization") String userToken){
+        return new ResponseEntity<>(chatService.getChats(userToken), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<AnswerResDto> sendChat(@PathVariable("userId") Long userId, @RequestBody AnswerReqDto answerReqDto){
-        return new ResponseEntity<>(chatService.createAnswer(userId, answerReqDto), HttpStatus.OK);
+    public ResponseEntity<AnswerResDto> sendChat(@RequestHeader(value = "Authorization") String userToken, @RequestBody AnswerReqDto answerReqDto){
+        return new ResponseEntity<>(chatService.createAnswer(userToken, answerReqDto), HttpStatus.OK);
     }
 }

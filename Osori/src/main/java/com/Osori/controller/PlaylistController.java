@@ -12,29 +12,29 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/playlist/{userId}")
+@RequestMapping("/playlist")
 public class PlaylistController {
     private final PlaylistService playlistService;
 
     @GetMapping
-    public ResponseEntity<PlaylistResDto> getPlaylist(@PathVariable("userId") Long userId){
-        return new ResponseEntity<>(playlistService.getPlaylist(userId), HttpStatus.OK);
+    public ResponseEntity<PlaylistResDto> getPlaylist(@RequestHeader(value = "Authorization") String userToken){
+        return new ResponseEntity<>(playlistService.getPlaylist(userToken), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Void> addPlaylist(@PathVariable("userId") Long userId, @RequestBody PlaylistReqDto playlistReqDto){
-        playlistService.addPlaylist(userId, playlistReqDto);
+    public ResponseEntity<Void> addPlaylist(@RequestHeader(value = "Authorization") String userToken, @RequestBody PlaylistReqDto playlistReqDto){
+        playlistService.addPlaylist(userToken, playlistReqDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlaylist(@PathVariable("userId") Long userId, @PathVariable("id") Long playlistId){
-        playlistService.deletePlaylist(userId, playlistId);
+    public ResponseEntity<Void> deletePlaylist(@RequestHeader(value = "Authorization") String userToken, @PathVariable("id") Long playlistId){
+        playlistService.deletePlaylist(userToken, playlistId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DetailResDto> detailPlaylist(@PathVariable("userId") Long userId, @PathVariable("id") Long playlistId){
-        return new ResponseEntity<>(playlistService.detailPlaylist(userId, playlistId), HttpStatus.OK);
+    public ResponseEntity<DetailResDto> detailPlaylist(@RequestHeader(value = "Authorization") String userToken, @PathVariable("id") Long playlistId){
+        return new ResponseEntity<>(playlistService.detailPlaylist(userToken, playlistId), HttpStatus.OK);
     }
 }

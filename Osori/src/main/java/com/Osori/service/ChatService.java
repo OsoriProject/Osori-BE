@@ -7,8 +7,12 @@ import com.Osori.domain.repository.UserRepository;
 import com.Osori.dto.*;
 import com.Osori.exception.CustomException;
 import com.Osori.exception.ErrorCode;
+import com.Osori.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,39 +22,48 @@ import java.util.List;
 public class ChatService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
+    private final TokenProvider tokenProvider;
 
     private final YoutubeService youtubeService;
 
-    private User getUser(Long userId){
-        return userRepository.findById(userId)
+    @Value("${flask.url}")
+    private String flaskUrl;
+
+    private User getUser(String userToken){
+        String userToken_ = userToken.substring(7);
+        String userEmail = tokenProvider.getUserEmailFromToken(userToken_);
+        return userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_USER));
     }
 
-    public ChatResDto getChats(Long userId){
-        User user = getUser(userId);
+    public ChatResDto getChats(String userToken){
+        User user = getUser(userToken);
         List<Chat> chatList = chatRepository.findByUser(user);
         return ChatResDto.of(chatList);
     }
 
-    public AnswerResDto createAnswer(Long userId, AnswerReqDto answerReqDto){
-        User user = getUser(userId);
+    public AnswerResDto createAnswer(String userToken, AnswerReqDto answerReqDto){
+        User user = getUser(userToken);
 
         List<YoutubeDto> playlists = new ArrayList<>();
-        String answer = answerReqDto.getContent() + "에 대한 대답";
-        if(false){ // 앞에 분석 하는 부분 넣어서 조건에 달아줘야함, 생성 안할때
-            ;
-        }else{ // 분석 결과 플레이리스트를 생성할 때
-//            boolean flag = true;
-//            while(flag){
-//                if(playlists.size() > 1)
-//                    flag = false;
-//                YoutubeDto youtubeDto = youtubeService.get(answerReqDto.getContent());
-//                playlists.add(youtubeDto);
-//            }
 
-            YoutubeDto youtubeDto = youtubeService.get(answerReqDto.getContent());
+        WebClient webClient = WebClient.builder()
+                .baseUrl(flaskUrl)
+                .build();
+
+        QueryDto queryDto = webClient.post()
+                .uri("/chat")
+                .body(Mono.just(answerReqDto), AnswerReqDto.class)
+                .retrieve()
+                .bodyToMono(QueryDto.class)
+                .block();
+
+        for(String youtube : queryDto.getPlaylist()){
+            YoutubeDto youtubeDto = youtubeService.get(youtube);
             playlists.add(youtubeDto);
         }
+
+        String answer = queryDto.getPlaylist().isEmpty() ? "다시 요청해 주세요." : "추천드리는 플레이리스트 입니다.";
 
         chatRepository.save(Chat.builder()
                 .content(answerReqDto.getContent())

@@ -2,6 +2,7 @@ package com.Osori.controller;
 
 import com.Osori.dto.AnswerReqDto;
 import com.Osori.dto.AnswerResDto;
+import com.Osori.dto.ChatDto;
 import com.Osori.dto.ChatResDto;
 import com.Osori.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,12 @@ public class ChatController {
     public ResponseEntity<ChatResDto> getChats(@RequestHeader(value = "Authorization") String userToken){
         return new ResponseEntity<>(chatService.getChats(userToken), HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ChatDto> getChat(@RequestHeader(value = "Authorization") String userToken, @PathVariable("id")Long chatId){
+        return new ResponseEntity<>(chatService.getChat(userToken, chatId), HttpStatus.OK);
+    }
+
 
     @PostMapping
     public ResponseEntity<AnswerResDto> sendChat(@RequestHeader(value = "Authorization") String userToken, @RequestBody AnswerReqDto answerReqDto){

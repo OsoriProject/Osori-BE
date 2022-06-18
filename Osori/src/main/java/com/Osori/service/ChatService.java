@@ -1,9 +1,7 @@
 package com.Osori.service;
 
-import com.Osori.domain.entity.Chat;
-import com.Osori.domain.entity.User;
-import com.Osori.domain.repository.ChatRepository;
-import com.Osori.domain.repository.UserRepository;
+import com.Osori.domain.entity.*;
+import com.Osori.domain.repository.*;
 import com.Osori.dto.*;
 import com.Osori.exception.CustomException;
 import com.Osori.exception.ErrorCode;
@@ -16,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +24,10 @@ public class ChatService {
     private final TokenProvider tokenProvider;
 
     private final YoutubeService youtubeService;
+
+    private final R_MusicRepository r_musicRepository;
+    private final PlaylistRepository playlistRepository;
+    private final MusicRepository musicRepository;
 
     @Value("${flask.url}")
     private String flaskUrl;
@@ -41,6 +44,14 @@ public class ChatService {
         List<Chat> chatList = chatRepository.findByUser(user);
         return ChatResDto.of(chatList);
     }
+
+    public ChatDto getChat(String userToken, Long chatId){
+        User user = getUser(userToken);
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_CHAT));
+        return ChatDto.of(chat);
+    }
+
 
     public AnswerResDto createAnswer(String userToken, AnswerReqDto answerReqDto){
         User user = getUser(userToken);
@@ -59,25 +70,65 @@ public class ChatService {
                 .block();
 
         for(String youtube : queryDto.getPlaylist()){
-            YoutubeDto youtubeDto = youtubeService.get(youtube);
-            playlists.add(youtubeDto);
+            Optional<R_Music> music = r_musicRepository.findById(youtube);
+            if(music.isPresent()){
+                System.out.println("이미 존재");
+                playlists.add(YoutubeDto.builder()
+                        .videoId(music.get().getVideoId())
+                        .title(music.get().getTitle())
+                        .thumbnail(music.get().getThumbnail())
+                        .build());
+            }else {
+                YoutubeDto youtubeDto = youtubeService.get(youtube);
+                playlists.add(youtubeDto);
+                r_musicRepository.save(R_Music.builder()
+                        .id(youtube)
+                        .videoId(youtubeDto.getVideoId())
+                        .thumbnail(youtubeDto.getThumbnail())
+                        .title(youtubeDto.getTitle())
+                        .build());
+            }
         }
 
+        Playlist playlist = null;
+        Long playlistId = null;
         String answer = queryDto.getPlaylist().isEmpty() ? "다시 요청해 주세요." : "추천드리는 플레이리스트 입니다.";
+        if(!answer.equals("다시 요청해 주세요.")){
+            playlist = playlistRepository.save(Playlist.builder()
+                    .name("기본값")
+                    .thumbnail(playlists.get(0).getThumbnail())
+                    .user(null)
+                    .build());
+            playlistId = playlist.getId();
+
+            List<Music> musicList = new ArrayList<>();
+            for(YoutubeDto music:playlists){
+                Music m = Music.builder()
+                        .vid(music.getVideoId())
+                        .title(music.getTitle())
+                        .thumbnail(music.getThumbnail())
+                        .playlist(playlist)
+                        .build();
+                musicList.add(m);
+            }
+            musicRepository.saveAll(musicList);
+        }
 
         chatRepository.save(Chat.builder()
                 .content(answerReqDto.getContent())
                 .sender("user")
+                .playlist(playlist)
                 .user(user)
                 .build());
 
         Long chatId = chatRepository.save(Chat.builder()
                 .content(answer)
                 .sender("bot")
+                .playlist(playlist)
                 .user(user)
                 .build()).getId();
 
-        return AnswerResDto.of(answer, playlists, chatId);
+        return AnswerResDto.of(answer, playlists, chatId, playlistId);
     }
 
 }

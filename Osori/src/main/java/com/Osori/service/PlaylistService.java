@@ -48,23 +48,11 @@ public class PlaylistService {
 
     public void addPlaylist(String userToken, PlaylistReqDto playlistReqDto){
         User user = getUser(userToken);
-        Playlist playlist = playlistRepository.save(Playlist.builder()
-                .name(playlistReqDto.getName())
-                .thumbnail(playlistReqDto.getMusics().get(0).getThumbnail())
-                .user(user)
-                .build());
-
-        List<Music> musicList = new ArrayList<>();
-        for(MusicDto music:playlistReqDto.getMusics()){
-            Music m = Music.builder()
-                    .vid(music.getVideoId())
-                    .title(music.getTitle())
-                    .thumbnail(music.getThumbnail())
-                    .playlist(playlist)
-                    .build();
-            musicList.add(m);
-        }
-        musicRepository.saveAll(musicList);
+        Playlist playlist = playlistRepository.findById(playlistReqDto.getPlaylistId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_PLAYLIST));
+        playlist.setName(playlistReqDto.getName());
+        playlist.setUser(user);
+        playlistRepository.save(playlist);
     }
 
     public void deletePlaylist(String userToken, Long playlistId){

@@ -1,8 +1,10 @@
 package com.Osori.service;
 
+import com.Osori.domain.entity.Chat;
 import com.Osori.domain.entity.Music;
 import com.Osori.domain.entity.Playlist;
 import com.Osori.domain.entity.User;
+import com.Osori.domain.repository.ChatRepository;
 import com.Osori.domain.repository.MusicRepository;
 import com.Osori.domain.repository.PlaylistRepository;
 import com.Osori.domain.repository.UserRepository;
@@ -24,6 +26,7 @@ import java.util.List;
 public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final MusicRepository musicRepository;
+    private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
 
@@ -57,7 +60,9 @@ public class PlaylistService {
 
     public void deletePlaylist(String userToken, Long playlistId){
         Playlist playlist = checkAuth(userToken, playlistId);
+        List<Chat> chats = chatRepository.findAllByPlaylist(playlist);
         playlistRepository.delete(playlist);
+        chatRepository.deleteAll(chats);
     }
 
     public DetailResDto detailPlaylist(String userToken, Long playlistId){

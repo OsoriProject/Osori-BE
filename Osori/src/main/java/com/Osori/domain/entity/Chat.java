@@ -24,4 +24,8 @@ public class Chat {
     @ManyToOne
     @JoinColumn(name = "User_id")
     private User user;
+
+    @OneToOne
+    @JoinColumn(name = "Playlist_id")
+    private Playlist playlist;
 }
